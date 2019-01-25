@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute} from '@angular/router';
 
-import { ProduitMockService } from './produit.mock.service';
+import { ProduitService } from './produit.service';
 import { Produit } from '../shared/produit';
 
 @Component({
@@ -13,19 +14,70 @@ export class ProduitComponent implements OnInit {
 
   produits: Produit[];
   produitForm: FormGroup ;
+  operation: String = 'add';
+  selectedProduit: Produit;
  // private produit: Produit;
 
-  constructor(private produitService: ProduitMockService,
-    private fb: FormBuilder) {
-      this.produitForm = fb.group(
-        {ref: ['', Validators.required],
-      quantite: '',
-    prixUnitaire: ''}
-      );
+  constructor(private produitService: ProduitService,
+    private fb: FormBuilder, private route: ActivatedRoute) {
+      this.createForm();
      }
 
   ngOnInit() {
-    this.produits = this.produitService.getProduits();
+    this.initProduit() ;
+    // this.loadProduits() ;
+    this.produits = this.route.snapshot.data.produits;
   }
 
+createForm() {
+    this.produitForm = this.fb.group(
+      {
+        ref: ['', Validators.required],
+        quantite: '',
+        prixUnitaire: ''
+      }
+    ) ;
+}
+
+loadProduits() {
+  this.produitService.getProduits().subscribe(
+    data => {this.produits = data; },
+    error => { console.log(' An error was occured '); },
+    () => { console.log('loading produit was done.'); }
+  );
+}
+
+addProduit() {
+  const p = this.produitForm.value;
+  this.produitService.addProduit(p).subscribe(
+    res => {
+      this.initProduit();
+      this.loadProduits();
+     // this.produitForm.reset();
+    }
+  ) ;
+}
+
+updateProduit() {
+  this.produitService.updateProduit(this.selectedProduit).subscribe(
+    res => {
+      this.initProduit();
+      this.loadProduits();
+    }
+  );
+}
+
+deleteProduit() {
+  this.produitService.deleteProduit(this.selectedProduit.ref).subscribe(
+    res => {
+      this.initProduit();
+      this.loadProduits();
+    }
+  );
+}
+
+initProduit() {
+  this.selectedProduit = new Produit();
+  this.createForm();
+}
 }
