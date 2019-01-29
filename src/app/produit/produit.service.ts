@@ -24,8 +24,8 @@ return this.http.get(API_URLS.PRODUITS_URL);
     return this.http.put(API_URLS.PRODUITS_URL, produit) ;
   }
 
-  deleteProduit(ref: String): Observable<any> {
-    return this.http.delete(API_URLS.PRODUITS_URL + '/' + ref) ;
+  deleteProduit(id: Number): Observable<any> {
+    return this.http.delete(API_URLS.PRODUITS_URL + '/' + id) ;
   }
 }
 

@@ -68,7 +68,7 @@ updateProduit() {
 }
 
 deleteProduit() {
-  this.produitService.deleteProduit(this.selectedProduit.ref).subscribe(
+  this.produitService.deleteProduit(this.selectedProduit.id).subscribe(
     res => {
       this.initProduit();
       this.loadProduits();
